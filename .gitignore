@@ -1,0 +1,10 @@
+# python compile files
+*.pyc
+./idea
+
+# database files
+*.sqlite
+
+# virtual interpreter
+/venv
+
