@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}节点{% endblock %}
+
+{% block page_content %}
+    <h3>交通节点经纬度等信息</h3>
+    <br>
+    <table class="table table-bordered">
+    {% for node in nodes %}
+        <tr>
+        <td>{{ node.name }}</td>
+        <td>{{ node.longitude }}</td>
+        <td>{{ node.latitude }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+
+{% endblock %}
