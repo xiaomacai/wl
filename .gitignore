@@ -1,9 +1,10 @@
 # python compile files
 *.pyc
-./idea
+.idea/
 
 # database files
 *.sqlite
+migrations
 
 # virtual interpreter
 /venv
