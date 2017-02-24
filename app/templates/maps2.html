@@ -6,7 +6,18 @@
 
 {% block page_content %}
     <h2>地图显示</h2>
-    <div id="allmap" style="width: 100%; height: 600px; border: 1px solid"></div>
+    <div id="allmap" style="width: 100%; height: 600px; border: 1px solid; float: left"></div>
+    <div>
+        <form action="{{ url_for('main.save_node') }}" name="f1">
+            <input type="text" name="longitude" value="经度">
+            <input type="text" name="latitude" value="维度">
+            <input type="text" name="name" value="地名">
+            <input type="submit" value="提交2">
+        </form>
+    </div>
+
+    <input type="text" class="hidden" name="nodes" value="{{ ns }}">
+
 
     {% block scripts %}
         {{ super() }}
@@ -21,9 +32,13 @@
         var geoc = new BMap.Geocoder();
         var name;   //地名
         var marker; // 标注
+        var lng;    // 经度
+        var lat;    // 维度
 
         map.addEventListener("ondblclick", function (e) {
-            alert(e.point.lng + "," + e.point.lat);     // 经纬度
+            lng = e.point.lng;
+            lat = e.point.lat;
+            alert(lng + "," + lat);     // 经纬度
 
             geoc.getLocation(e.point, function (rs) {
                 var addComp = rs.addressComponents;
@@ -32,16 +47,41 @@
                 alert(name);
             });
 
-            point = new BMap.Point(Number(e.point.lng), Number(e.point.lat));   // 地图标注点
-            marker = new BMap.Marker(point);
+            add_lay(lng, lat);  // 标注
 
-            map.addOverlay(marker);
             marker.addEventListener("click", getAttr);
             function getAttr() {
                 var p = marker.getPosition();       //获取marker的位置
-                alert("marker的位置是" + p.lng + "," + p.lat);
+                alert(name + "经纬度:" + p.lng + "," + p.lat);
+                setFormValue();
+            }
+
+            function setFormValue() {
+                var a = document.getElementsByName("longitude")[0];
+                var b = document.getElementsByName("latitude")[0];
+                var c = document.getElementsByName("name")[0];
+
+                a.value = lng;
+                b.value = lat;
+                c.value = name;
             }
         });
+
+        function add_lay(lng, lat) {
+            point = new BMap.Point(Number(lng), Number(lat));   // 地图标注点
+            marker = new BMap.Marker(point);
+
+            map.addOverlay(marker);
+        }
+
+        var ns = document.getElementsByName("nodes")[0].value;
+        var ns_array = ns.split('-');
+        for (var i = 0; i < ns_array.length; i++) {
+            lng_lat = ns_array[i].split(',');
+            add_lay(Number(lng_lat[0]), Number(lng_lat[1]));
+
+        }
+
     </script>
 {% endblock %}
 

@@ -12,6 +12,6 @@ class Node(db.Model):
     __tablename__ = 'nodes'
     id = db.Column(db.INTEGER, primary_key=True)
     name = db.Column(db.TEXT)
-    longitude = db.Column(db.FLOAT)  # 经度
-    latitude = db.Column(db.FLOAT)   # 纬度
+    longitude = db.Column(db.FLOAT, nullable=False)  # 经度
+    latitude = db.Column(db.FLOAT, nullable=False)   # 纬度
 

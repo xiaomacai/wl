@@ -10,6 +10,7 @@
         <td>{{ node.name }}</td>
         <td>{{ node.longitude }}</td>
         <td>{{ node.latitude }}</td>
+        <td><a href="{{ url_for('main.delete_node', lng=node.longitude, lat=node.latitude) }}">删除</a></td>
         </tr>
     {% endfor %}
     </table>
