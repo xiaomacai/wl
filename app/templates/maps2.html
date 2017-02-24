@@ -1,0 +1,47 @@
+<!doctype html>
+{% extends "base.html" %}
+
+{% block title %}地图{% endblock %}
+
+
+{% block page_content %}
+    <h2>地图显示</h2>
+    <div id="allmap" style="width: 100%; height: 600px; border: 1px solid"></div>
+
+    {% block scripts %}
+        {{ super() }}
+        <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=mYVGC2WXkR6sycVOmd0swObK"></script>
+    {% endblock %}
+
+    <script>
+        var map = new BMap.Map("allmap", {enableMapClick: false}); // 关闭底图可点动能
+        map.enableScrollWheelZoom(true);       // 鼠标滚动缩放
+        var point = new BMap.Point(116.400244, 39.92556);
+        map.centerAndZoom(point, 12);
+        var geoc = new BMap.Geocoder();
+        var name;   //地名
+        var marker; // 标注
+
+        map.addEventListener("ondblclick", function (e) {
+            alert(e.point.lng + "," + e.point.lat);     // 经纬度
+
+            geoc.getLocation(e.point, function (rs) {
+                var addComp = rs.addressComponents;
+                name = addComp.province + ',' + addComp.city + ',' + addComp.district + ',' +
+                        addComp.street + ',' + addComp.streetNumber;    // 地名
+                alert(name);
+            });
+
+            point = new BMap.Point(Number(e.point.lng), Number(e.point.lat));   // 地图标注点
+            marker = new BMap.Marker(point);
+
+            map.addOverlay(marker);
+            marker.addEventListener("click", getAttr);
+            function getAttr() {
+                var p = marker.getPosition();       //获取marker的位置
+                alert("marker的位置是" + p.lng + "," + p.lat);
+            }
+        });
+    </script>
+{% endblock %}
+

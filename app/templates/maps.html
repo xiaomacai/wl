@@ -11,18 +11,38 @@
     {% block scripts %}
         {{ super() }}
         <script src="http://webapi.amap.com/maps?v=1.3&key=a7062b1c0ed0b2a3edbd12a7ca216e69"></script>
+
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type=text/javascript>
+            $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+        </script>
     {% endblock %}
 
     <script>
+        var lng, lat;
         var map = new AMap.Map('container', {
 
             zoom: 15,
-            center: [117.040791,36.651916]
+            center: [117.040791, 36.651916]
 
         });
-    var clickEventListener = map.on('click', function(e) {
-        alert(e.lnglat.getLng() + ',' + e.lnglat.getLat());
-    });
+        function addMarker() {
+            marker = new AMap.Marker({
+                icon: "http://webapi.amap.com/theme/v1.3/markers/n/mark_b.png",
+                position: [lng, lat]
+            });
+            marker.setMap(map);
+        }
+
+        var clickEventListener = map.on('click', function (e) {
+            lng = e.lnglat.getLng();
+            lat = e.lnglat.getLat();
+            addMarker();
+            alert(lng + ',' + lat);
+
+        });
+
+
 
     </script>
 {% endblock %}

@@ -33,5 +33,5 @@ def nodes():
 
 @main.route('/maps')
 def maps():
-    return render_template('maps.html')
+    return render_template('maps2.html')
 
