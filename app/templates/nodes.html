@@ -5,8 +5,16 @@
     <h3>交通节点经纬度等信息</h3>
     <br>
     <table class="table table-bordered">
+    <tr>
+        <td>编号</td>
+        <td>地名</td>
+        <td>经度</td>
+        <td>纬度</td>
+        <td>操作</td>
+    </tr>
     {% for node in nodes %}
         <tr>
+        <td>{{ node.id }}</td>
         <td>{{ node.name }}</td>
         <td>{{ node.longitude }}</td>
         <td>{{ node.latitude }}</td>
