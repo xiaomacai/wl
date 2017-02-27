@@ -10,7 +10,7 @@ def nodes():
 
 @map.route('/opt_nodes')
 def opt_nodes():
-    return render_template('map.opt_nodes.html')
+    return render_template('map/opt_nodes.html')
 
 
 @map.route('/loads')

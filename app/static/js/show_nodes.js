@@ -4,4 +4,4 @@ var ns_array = ns.split('-');
 ns_array.forEach(function (element) {
     lng_lat = element.split(',');
     add_lay(lng_lat[0], Number(lng_lat[1]), Number(lng_lat[2]));
-})
+});
