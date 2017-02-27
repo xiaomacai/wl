@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}道路{% endblock %}
+
+{% block page_content %}
+    <p><span style="color: #000;"> <h4>输入道路始点终点</h4></span></p>
+    <form action="{{ url_for('main.save_load') }}">
+        始点:
+        <input type="text" name="start_node">
+        终点:
+        <input type="text" name="end_node">
+        <input type="hidden" name="length">
+        <input type="submit" name="add" value="添加">
+
+    </form><br>
+    <div id="allmap" style="width: 100%; height: 600px; border: 1px solid; float: left"></div>
+
+    <input type="text" class="hidden" name="nodes" value="{{ ns }}">
+
+    {% block scripts %}
+        {{ super() }}
+        <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=mYVGC2WXkR6sycVOmd0swObK"></script>
+        <script type="text/javascript" src={{ url_for('static', filename='js/init_map.js') }}></script>
+        <script type="text/javascript" src={{ url_for('static', filename='js/show_nodes.js') }}></script>
+        <script type="text/javascript" src={{ url_for('static', filename='js/loads.js') }}></script>
+
+    {% endblock %}
+
+
+{% endblock %}

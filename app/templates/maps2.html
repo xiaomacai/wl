@@ -1,18 +1,30 @@
 <!doctype html>
 {% extends "base.html" %}
 
-{% block title %}地图{% endblock %}
+{% block title %}添加点{% endblock %}
 
 
 {% block page_content %}
-    <h2>地图显示</h2>
+    <h2>添加及删除节点</h2>
+    <div style="position: relative; left: 40px">
+    <h4>添加</h4>
+    <p>通过双击地图中任意位置标注改点，后点击改点显示其经纬度等信息，
+        最后点击<span style="color: red;">添加</span>按钮添加节点。</p>
+    <h4>删除</h4>
+    <p>在节点编号输入框中输入地图中标注点所显示节点编号，再点击
+        <span style="color: red;">删除</span>按钮以删除该节点。</p>
+    </div>
     <div id="allmap" style="width: 100%; height: 600px; border: 1px solid; float: left"></div>
     <div>
-        <form action="{{ url_for('main.save_node') }}" name="f1">
-            <input type="text" name="longitude" value="经度">
-            <input type="text" name="latitude" value="维度">
-            <input type="text" name="name" value="地名">
-            <input type="submit" value="提交">
+        <form action="{{ url_for('main.save_node') }}" name="f1" style="float: left">
+            <input type="text" name="longitude" value="经度" size="12px 10px">
+            <input type="text" name="latitude" value="维度" size="12px 10px">
+            <input type="text" name="name" value="地名" size="30px 10px">
+            <input type="submit" name="add" value="添加">
+        </form>
+        <form action="{{ url_for('main.delete_node') }}" name="f2" style="position: relative; left: 20px;">
+            <input type="text" name="id" value="编号">
+            <input type="submit" name="delete" value="删除">
         </form>
     </div>
 
@@ -21,64 +33,11 @@
 
     {% block scripts %}
         {{ super() }}
+        <script type="text/javascript" src={{ url_for('static', filename='js/jquery.js') }}></script>
         <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=mYVGC2WXkR6sycVOmd0swObK"></script>
+        <script type="text/javascript" src={{ url_for('static', filename='js/init_map.js') }}></script>
+        <script type="text/javascript" src={{ url_for('static', filename='js/marker.js') }}></script>
+        <script type="text/javascript" src={{ url_for('static', filename='js/show_nodes.js') }}></script>
     {% endblock %}
-
-    <script>
-        var map = new BMap.Map("allmap", {enableMapClick: false}); // 关闭底图可点动能
-        map.enableScrollWheelZoom(true);       // 鼠标滚动缩放
-        var point = new BMap.Point(117.051534, 36.660632);
-        map.centerAndZoom(point, 16);
-        var geoc = new BMap.Geocoder();
-        var name;   //地名
-        var marker; // 标注
-        var lng;    // 经度
-        var lat;    // 维度
-
-        map.addEventListener("ondblclick", function (e) {
-            lng = e.point.lng;
-            lat = e.point.lat;
-
-            geoc.getLocation(e.point, function (rs) {
-                var addComp = rs.addressComponents;
-                name = addComp.province + ',' + addComp.city + ',' + addComp.district + ',' +
-                        addComp.street + ',' + addComp.streetNumber;    // 地名
-            });
-
-            add_lay(lng, lat);  // 标注
-
-            marker.addEventListener("click", getAttr);
-            function getAttr() {
-                var p = marker.getPosition();       //获取marker的位置
-
-                setFormValue();
-            }
-
-            function setFormValue() {
-                var a = document.getElementsByName("longitude")[0];
-                var b = document.getElementsByName("latitude")[0];
-                var c = document.getElementsByName("name")[0];
-
-                a.value = lng;
-                b.value = lat;
-                c.value = name;
-            }
-        });
-
-        function add_lay(lng, lat) {
-            point = new BMap.Point(Number(lng), Number(lat));   // 地图标注点
-            marker = new BMap.Marker(point);
-
-            map.addOverlay(marker);
-        }
-
-        var ns = document.getElementsByName("nodes")[0].value;
-        var ns_array = ns.split('-');
-        ns_array.forEach(function(element){
-            lng_lat = element.split(',');
-            add_lay(Number(lng_lat[0]), Number(lng_lat[1]));
-        })
-
-    </script>
 {% endblock %}
 

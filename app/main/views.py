@@ -2,12 +2,22 @@
 """
 视图函数文件
 """
-from flask import render_template, redirect, url_for, jsonify, request
+from flask import render_template, redirect, url_for, jsonify, request, flash
 from . import main
-from .forms import NodeForm
-from ..models import Node
+from .forms import NodeForm, LoadForm
+from ..models import Node, Load
 from .. import db
 import json
+import sqlite3
+
+
+def select_nodes():
+    nodes = Node.query.all()
+    ns = ''
+    for node in nodes:
+        ns += str(node.id) + ',' + str(node.longitude) + ',' + str(node.latitude)
+        ns += '-'
+    return ns
 
 
 @main.route('/', methods=['POST', 'GET'])
@@ -32,13 +42,26 @@ def nodes():
     return render_template('nodes.html', nodes=nodes)
 
 
+@main.route('/js_nodes')
+def js_nodes():
+    return jsonify(result=select_nodes())
+
+
+@main.route('/loads')
+def loads():
+    ns = select_nodes()
+    return render_template('loads.html', ns=ns)
+
+
+@main.route('/save_load')
+def save_load():
+    start_node = request.args.get('start_node')
+    end_node = request.args.get('end_node')
+
+
 @main.route('/maps')
 def maps():
-    nodes = Node.query.all()
-    ns = ''
-    for node in nodes:
-        ns += str(node.longitude) + ',' + str(node.latitude)
-        ns += '-'
+    ns = select_nodes()
     return render_template('maps2.html', ns=ns)
 
 
@@ -49,24 +72,30 @@ def save_node():
     latitude = request.args.get('latitude')
 
     node = Node(name=name, longitude=longitude, latitude=latitude)
-
-    import sqlite3
     try:
         db.session.add(node)
         db.session.commit()
     except sqlite3.IntegrityError:
         pass
-    nodes = Node.query.all()
+    flash(u'添加成功')
     return redirect(url_for('main.maps'))
 
 
 @main.route('/delete_node/')
 def delete_node():
-    lng = request.args['lng']
-    lat = request.args['lat']
-    node = Node.query.filter_by(longitude=lng, latitude=lat).first()
-    if node is not None:
-        db.session.delete(node)
-    nodes = Node.query.all()
+    id = request.args.get('id')
+    if id is not None:
+        node = Node.query.filter_by(id=id).first()
+        if node is not None:
+            db.session.delete(node)
+        else:
+            flash(u'编号为{}的节点不存在'.format(id))
+        return redirect(url_for('main.maps'))
+    else:
+        lng = request.args['lng']
+        lat = request.args['lat']
+        node = Node.query.filter_by(longitude=lng, latitude=lat).first()
+        if node is not None:
+            db.session.delete(node)
     return redirect(url_for('main.nodes'))
 

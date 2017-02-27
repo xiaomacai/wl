@@ -12,3 +12,9 @@ class NodeForm(FlaskForm):
     longitude = FloatField(u'经度', validators=[DataRequired()])
     latitude = FloatField(u'纬度', validators=[DataRequired()])
     submit = SubmitField(u'提交')
+
+
+class LoadForm(FlaskForm):
+    start_node = StringField(u'始点', validators=[DataRequired()])
+    end_node = StringField(u'终点', validators=[DataRequired()])
+    submit =SubmitField(u'提交')
