@@ -7,7 +7,6 @@ from wtforms import SubmitField, FloatField, StringField
 from wtforms.validators import DataRequired
 
 
-
 class LoadForm(FlaskForm):
     start_node = StringField(u'始点', validators=[DataRequired()])
     end_node = StringField(u'终点', validators=[DataRequired()])
