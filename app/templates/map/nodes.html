@@ -43,11 +43,12 @@
             var point = new BMap.Point(117.051534, 36.660632);
             map.centerAndZoom(point, 16);
         }
-        function show_nodes(nodes_str) {
-            var ns_array = nodes_str.split('-');
-            ns_array.forEach(function (element) {
-                lng_lat = element.split(',');
-                add_lay(lng_lat[0], Number(lng_lat[1]), Number(lng_lat[2]));
+        function show_nodes(nodes_list) {
+            nodes_list.forEach(function (element) {
+                var id = element.id;
+                var lng = element.longitude;
+                var lat = element.latitude;
+                add_lay(id, lng, lat);
             });
         }
         function add_lay(id, lng, lat) {
@@ -69,14 +70,16 @@
                 });
             });
         });
-        function list_nodes(nodes_str) {
-            $('.table>thead').html('<tr><th>编号</th><th>经度</th><th>纬度</th></tr>');
-            var ns_array = nodes_str.split('-');
-            ns_array.forEach(function (element) {
-                lng_lat = element.split(',');
-                    $('.table>tbody').append(
-                      '<tr><th>'+lng_lat[0]+'</th><th>'+lng_lat[1]+'</th><th>'+lng_lat[2]+'</th></tr>'
-                    );
+        function list_nodes(nodes_list) {
+            $('.table>thead').html('<tr><th>编号</th><th>经度</th><th>纬度</th><th>地名</th></tr>');
+            nodes_list.forEach(function (element) {
+                var id = element.id;
+                var lng = element.longitude;
+                var lat = element.latitude;
+                var name = element.name;
+                $('.table>tbody').append(
+                        '<tr><th>' + id + '</th><th>' + lng + '</th><th>' + lat + '</th><th>'+name+'</th></tr>'
+                );
             });
         }
     </script>

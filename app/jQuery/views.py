@@ -7,9 +7,13 @@ from flask import jsonify
 def all_nodes():
     nodes = Node.query.all()
 
-    nodes_str = ''
+    nodes_list = []
     for node in nodes:
-        nodes_str += str(node.id) + ',' + str(node.longitude) + ',' + str(node.latitude)
-        nodes_str += '-'
-    return jsonify(result=nodes_str)
+        nodes_list.append({
+            'id': node.id,
+            'longitude': node.longitude,
+            'latitude': node.latitude,
+            'name': node.name
+        })
+    return jsonify(result=nodes_list)
 
