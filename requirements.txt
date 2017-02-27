@@ -5,3 +5,4 @@ flask-script
 flask-bootstrap
 flask_migrate
 flask_wtf
+flask-login

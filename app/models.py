@@ -3,6 +3,8 @@
 db model文件
 """
 from . import db
+from flask_login import UserMixin
+from . import loginManager
 
 
 class Load(db.Model):
@@ -22,6 +24,19 @@ class Node(db.Model):
     name = db.Column(db.TEXT)
     longitude = db.Column(db.FLOAT, nullable=False)  # 经度
     latitude = db.Column(db.FLOAT, nullable=False)   # 纬度
+
+
+class User(UserMixin, db.Model):
+    __tablename__ = 'users'
+    id = db.Column(db.INTEGER, primary_key=True)
+    name = db.Column(db.String(64))
+    password = db.Column(db.String(64))
+
+
+@loginManager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
 
 
 

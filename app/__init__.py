@@ -6,11 +6,14 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_moment import Moment
 from flask_bootstrap import Bootstrap
+from flask_login import LoginManager
 from config import config
 
 db = SQLAlchemy()
 moment = Moment()
 bootstrap = Bootstrap()
+loginManager = LoginManager()
+loginManager.login_view = 'auth.login'
 
 
 def create_app(config_name):
@@ -21,8 +24,16 @@ def create_app(config_name):
     db.init_app(app)
     moment.init_app(app)
     bootstrap.init_app(app)
+    loginManager.init_app(app)
 
-    from .main import main as main_bluprint
-    app.register_blueprint(main_bluprint)
+    from .main import main as main_blueprint
+    app.register_blueprint(main_blueprint)
+
+    from .jQuery import jQuery as jQuery_blueprint
+    app.register_blueprint(jQuery_blueprint, url_prefix='/jquery')
+
+    from .auth import auth as auth_blueprint
+    app.register_blueprint(auth_blueprint, url_prefix='/auth')
 
     return app
+
