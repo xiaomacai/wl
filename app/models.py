@@ -5,6 +5,7 @@ db model文件
 from . import db
 from flask_login import UserMixin
 from . import loginManager
+from random import randint
 
 
 class Load(db.Model):
@@ -12,7 +13,25 @@ class Load(db.Model):
     id = db.Column(db.INTEGER, primary_key=True, autoincrement=True)
     start_node_id = db.Column(db.INTEGER)
     end_node_id = db.Column(db.INTEGER)
-    length = db.Column(db.FLOAT)
+    length = db.Column(db.FLOAT)    # 路段长度
+    flow = db.Column(db.INTEGER)    # 路段交通流量
+    travel_time = db.Column(db.FLOAT) # 路段旅行时间
+
+    @staticmethod
+    def insert_flow():
+        loads = Load.query.all()
+        for load in loads:
+            load.flow = randint(1000, 3000)
+            db.session.add(load)
+        db.session.commit()
+
+    @staticmethod
+    def insert_travel_time():
+        loads = Load.query.all()
+        for load in loads:
+            load.travel_time = load.length / 50
+            db.session.add(load)
+        db.session.commit()
 
 
 class Node(db.Model):
