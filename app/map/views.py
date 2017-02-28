@@ -21,3 +21,8 @@ def loads():
 @map.route('/opt_loads')
 def opt_loads():
     return render_template('map/opt_loads.html')
+
+
+@map.route('/disaster_rescue_map')
+def disaster_rescue_map():
+    return render_template('map/disaster_rescue_map.html')
