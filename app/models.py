@@ -17,6 +17,12 @@ class Load(db.Model):
     flow = db.Column(db.INTEGER)    # 路段交通流量
     travel_time = db.Column(db.FLOAT) # 路段旅行时间
 
+    def __init__(self, **kwargs):
+        super(Load, self).__init__(**kwargs)
+        if self.length is not None:
+            self.flow = randint(1000, 3000)
+            self.travel_time = self.length / 60
+
     @staticmethod
     def insert_flow():
         loads = Load.query.all()
