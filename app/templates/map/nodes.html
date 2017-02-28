@@ -10,11 +10,10 @@
     {% endblock %}
 
     <ul class="nav nav-tabs">
-        <li>
+        <li class="active">
             <a href="#" id="map">地图显示</a>
         </li>
         <li><a href="#" id="list">列表显示</a></li>
-
     </ul>
 
     {#    <div id="result"></div>#}
@@ -39,6 +38,7 @@
                 });
                 return false;
             });
+            $('a#map').click();
         });
         function init_map() {
             map = new BMap.Map("allmap", {enableMapClick: false}); // 关闭底图可点动能

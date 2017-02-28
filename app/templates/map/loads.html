@@ -10,7 +10,7 @@
         <script type="text/javascript">$SCRIPT_ROOT = {{ request.script_root | tojson | safe }}</script>
     {% endblock %}
     <ul class="nav nav-tabs">
-        <li><a href="#" id="map">地图显示</a></li>
+        <li class="active"><a href="#" id="map">地图显示</a></li>
         <li><a href="#" id="list">列表显示</a></li>
     </ul>
 
@@ -41,11 +41,11 @@
                     show_nodes(data.result);
                     nodes = data.result;
                 });
-
                 $.getJSON($SCRIPT_ROOT + '/jquery/all_loads', {}, function (data) {
                     show_loads(data.result);
                 });
-            })
+            });
+            $('a#map').click();
         });
         function list_loads(loads_list) {
             $('.table>thead').html('<tr><th>编号</th><th>始点</th><th>终点</th><th>长度(m)</th></tr>');
