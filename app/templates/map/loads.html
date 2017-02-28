@@ -1,1 +1,101 @@
 {% extends "base.html" %}
+
+{% block title %}节点{% endblock %}
+
+{% block page_content %}
+    {% block scripts %}
+        {{ super() }}
+        <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=mYVGC2WXkR6sycVOmd0swObK"></script>
+        <script type="text/javascript" src={{ url_for('static', filename="js/jquery.js") }}></script>
+        <script type="text/javascript">$SCRIPT_ROOT = {{ request.script_root | tojson | safe }}</script>
+    {% endblock %}
+    <ul class="nav nav-tabs">
+        <li><a href="#" id="map">地图显示</a></li>
+        <li><a href="#" id="list">列表显示</a></li>
+    </ul>
+
+    {#    <div id="result"></div>#}
+    <div id="allmap" style="width: 100%; height: 600px; float: left"></div>
+    <div id="load_table">
+        <table class="table table-bordered table-hover table-striped">
+            <thead></thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script type="text/javascript">
+        var nodes;
+        $(function () {
+            $('a#list').bind('click', function () {
+                $.getJSON($SCRIPT_ROOT + '/jquery/all_loads', {}, function (data) {
+                    $('div#allmap').hide();
+                    $('div#load_table').show();
+                    list_loads(data.result);
+                });
+            });
+            $('a#map').bind('click', function () {
+                $('div#load_table').hide();
+                $('div#allmap').show();
+                $.getJSON($SCRIPT_ROOT + '/jquery/all_nodes', {}, function (data) {
+                    init_map();
+                    show_nodes(data.result);
+                    nodes = data.result;
+                });
+
+                $.getJSON($SCRIPT_ROOT + '/jquery/all_loads', {}, function (data) {
+                    show_loads(data.result);
+                });
+            })
+        });
+        function list_loads(loads_list) {
+            $('.table>thead').html('<tr><th>编号</th><th>始点</th><th>终点</th><th>长度(m)</th></tr>');
+            var id, s_id, e_id, len;
+            $('.table>tbody>tr>th').remove(); // 重复点击显示列表时清除已有列表
+            loads_list.forEach(function (load) {
+                s_id = load[0];
+                e_id = load[1];
+                len = load[3];
+                id = load[2];
+                $('.table>tbody').append(
+                        '<tr><th>' + id + '</th><th>' + s_id + '</th><th>' + e_id + '</th><th>' + len + '</th></tr>'
+                );
+            });
+        }
+
+        function show_loads(loads_list) {
+            // 参数为节点编号列表，[[1,2],[2,1]]表示路1->2、路2->1
+            loads_list.forEach(function (e) {
+                var pointA = new BMap.Point(nodes[e[0]].longitude, nodes[e[0]].latitude);
+                var pointB = new BMap.Point(nodes[e[1]].longitude, nodes[e[1]].latitude);
+                var polyline = new BMap.Polyline([pointA, pointB], {
+                    strokeColor: "green",
+                    strokeWeight: 6,
+                    strokeOpacity: 0.5
+                });  //定义折线
+                map.addOverlay(polyline);   // 添加折线（道路)
+            })
+        }
+
+        function init_map() {
+            map = new BMap.Map("allmap", {enableMapClick: false}); // 关闭底图可点动能
+            map.enableScrollWheelZoom(true);       // 鼠标滚动缩放
+            var point = new BMap.Point(117.051534, 36.660632);
+            map.centerAndZoom(point, 16);
+        }
+        function show_nodes(nodes_list) {
+            var id, lng, lat;
+            for (id in nodes_list) {
+                lng = nodes_list[id]['longitude'];
+                lat = nodes_list[id]['latitude'];
+                add_lay(id, lng, lat);
+            }
+        }
+        function add_lay(id, lng, lat) {
+            // 在（lng,lat)的点标注
+            point = new BMap.Point(Number(lng), Number(lat));
+            marker = new BMap.Marker(point);
+            marker.setLabel(new BMap.Label(id));    //添加标注标签为节点编号
+            map.addOverlay(marker);
+        }
+    </script>
+{% endblock %}

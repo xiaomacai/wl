@@ -9,15 +9,18 @@
         <script type="text/javascript">$SCRIPT_ROOT = {{ request.script_root | tojson | safe }}</script>
     {% endblock %}
 
-    <div>
-        <a href="#" id="map">地图显示</a>
-        <a href="#" id="list">列表显示</a>
-        <br><br>
-    </div>
+    <ul class="nav nav-tabs">
+        <li>
+            <a href="#" id="map">地图显示</a>
+        </li>
+        <li><a href="#" id="list">列表显示</a></li>
+
+    </ul>
+
     {#    <div id="result"></div>#}
     <div id="allmap" style="width: 100%; height: 600px; float: left"></div>
     <div id="node_table">
-        <table class="table">
+        <table class="table table-bordered table-hover table-striped">
             <thead></thead>
             <tbody></tbody>
         </table>
@@ -44,12 +47,12 @@
             map.centerAndZoom(point, 16);
         }
         function show_nodes(nodes_list) {
-            nodes_list.forEach(function (element) {
-                var id = element.id;
-                var lng = element.longitude;
-                var lat = element.latitude;
+            var id, lng, lat;
+            for (id in nodes_list) {
+                lng = nodes_list[id]['longitude'];
+                lat = nodes_list[id]['latitude'];
                 add_lay(id, lng, lat);
-            });
+            }
         }
         function add_lay(id, lng, lat) {
             // 在（lng,lat)的点标注
@@ -72,15 +75,16 @@
         });
         function list_nodes(nodes_list) {
             $('.table>thead').html('<tr><th>编号</th><th>经度</th><th>纬度</th><th>地名</th></tr>');
-            nodes_list.forEach(function (element) {
-                var id = element.id;
-                var lng = element.longitude;
-                var lat = element.latitude;
-                var name = element.name;
+            var id, lng, lat, name;
+            $('.table>tbody>tr>th').remove(); // 重复点击显示列表时清除已有列表
+            for (id in nodes_list) {
+                lng = nodes_list[id]['longitude'];
+                lat = nodes_list[id]['latitude'];
+                name = nodes_list[id]['name'];
                 $('.table>tbody').append(
-                        '<tr><th>' + id + '</th><th>' + lng + '</th><th>' + lat + '</th><th>'+name+'</th></tr>'
+                        '<tr><th>' + id + '</th><th>' + lng + '</th><th>' + lat + '</th><th>' + name + '</th></tr>'
                 );
-            });
+            }
         }
     </script>
 

@@ -17,22 +17,27 @@
                     <li><a href="/">首页</a></li>
                     <li><a href="/">介绍</a></li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                           aria-haspopup="true" aria-expanded="false">节点
-                            <span class="caret"></span>
+                        <a data-target="#" class="dropdown-toggle" data-toggle="dropdown">
+                            节点
+                            <b class="caret"></b>
                         </a>
-                        <ul class="dropdown-menu">
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                             <li><a href="{{ url_for('map.nodes') }}">显示节点</a></li>
+                            {% if current_user.is_authenticated %}
                             <li><a href="{{ url_for('map.opt_nodes') }}">管理节点</a></li>
+                            {% endif %}
                         </ul>
                     </li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                        <a data-target="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                            aria-expanded="false" aria-haspopup="true">道路
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
                             <li><a href="{{ url_for('map.loads') }}">显示道路</a></li>
+                            {% if current_user.is_authenticated %}
+                            <li><a href="{{ url_for('map.opt_loads') }}">管理道路</a></li>
+                            {% endif %}
                         </ul>
                     </li>
                     <li><a href="/">首页</a></li>
@@ -68,6 +73,7 @@
 
 {% block script %}
     {{ super() }}
+    <script>$('dropdown-toggle').dropdown();</script>
 {% endblock %}
 
 {% block head %}

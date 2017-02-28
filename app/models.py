@@ -9,9 +9,9 @@ from . import loginManager
 
 class Load(db.Model):
     __tablename__ = 'loads'
-    id = db.Column(db.INTEGER, primary_key=True)
-    start_node_id = db.Column(db.INTEGER, db.ForeignKey('nodes.id'), primary_key=True)
-    end_node_id = db.Column(db.INTEGER, db.ForeignKey('nodes.id'), primary_key=True)
+    id = db.Column(db.INTEGER, primary_key=True, autoincrement=True)
+    start_node_id = db.Column(db.INTEGER)
+    end_node_id = db.Column(db.INTEGER)
     length = db.Column(db.FLOAT)
 
 
