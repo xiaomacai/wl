@@ -60,6 +60,12 @@
             marker = new BMap.Marker(point);
             marker.setLabel(new BMap.Label(id));    //添加标注标签为节点编号
             map.addOverlay(marker);
+            marker.addEventListener('click', attribute);    // 为marker添加事件，点击alert经纬度
+        }
+        function attribute(e) {
+            // marker 点击事件，显示经纬度
+            var p = e.target;
+            alert('经纬度： '+p.getPosition().lng+', '+p.getPosition().lat);
         }
     </script>
 
