@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}交通流量热力图{% endblock %}
+
+{% block page_content %}
+    {% block scripts %}
+        {{ super() }}
+        <script type="text/javascript" src={{ url_for('static', filename="js/jquery.js") }}></script>
+        <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=mYVGC2WXkR6sycVOmd0swObK"></script>
+        {#        热力图js文件#}
+        <script type="text/javascript" src={{ url_for('static', filename="js/Heatmap_min.js") }}></script>
+        <script type="text/javascript">$SCRIPT_ROOT = {{ request.script_root | tojson | safe }}</script>
+    {% endblock %}
+
+    <input type="button" value="显示热力图" id="show_heat_map">
+    <div id="allmap" style="width: 100%; height: 600px; float: left"></div>
+
+    <script>
+        var map = new BMap.Map("allmap"); // 关闭底图可点动能
+        map.enableScrollWheelZoom();       // 鼠标滚动缩放
+        var point = new BMap.Point(117.051534, 36.660632);
+        map.centerAndZoom(point, 16);
+
+        heatmapOverlay = new BMapLib.HeatmapOverlay({"radius": 10});
+
+        var nodes;
+        var loads;
+        var points;
+        $(function () {
+            $('input#show_heat_map').bind('click', function () {
+                show_heat_map(heatmapOverlay);
+                $.getJSON($SCRIPT_ROOT + '/jquery/all_nodes', {}, function (data) {
+                    nodes = data.result;
+                });
+                $.getJSON($SCRIPT_ROOT + '/jquery/all_loads', {}, function (data) {
+                    loads = data.result;
+                    loads.forEach(function (load) {
+                        var start_id = load[0];
+                        var end_id = load[1];
+                        var start_lng = nodes[start_id]['longitude'];
+                        var start_lat = nodes[start_id]['latitude'];
+                        var end_lng = nodes[end_id]['longitude'];
+                        var end_lat = nodes[end_id]['latitude'];
+                        var k = (start_lat - end_lat) / (start_lng - end_lng);
+                        var step = (start_lng - end_lng) / 10;
+                        var flow = load[4];
+
+                        for (var i = 0; i <= 10; i++) {
+                            var point = {"lng": end_lng + i * step, "lat": k * i * step + end_lat, "count": flow};
+                            points.push(point);
+                        }
+                    });
+                });
+            });
+            function show_heat_map(heatmapOverlay) {
+                var points2 = [{'lng': 117.062421, 'lat': 36.6604, 'count': 1946}];
+                map.addOverlay(heatmapOverlay);
+                heatmapOverlay.setDataSet({data: points2, max: 100});
+                heatmapOverlay.show();
+            }
+        });
+    </script>
+{% endblock %}

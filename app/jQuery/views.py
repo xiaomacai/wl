@@ -25,7 +25,7 @@ def all_loads():
 
     loads_list = []
     for load in loads:
-        loads_list.append((load.start_node_id, load.end_node_id, load.id, load.length))
+        loads_list.append((load.start_node_id, load.end_node_id, load.id, load.length, load.flow))
     return jsonify(result=list(set(loads_list)))
 
 
