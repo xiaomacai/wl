@@ -29,6 +29,26 @@ def all_loads():
     return jsonify(result=list(set(loads_list)))
 
 
+@jQuery.route('/all_loads_nodes')
+def all_loads_nodes():
+    nodes = Node.query.all()
+
+    nodes_list = dict()
+    for node in nodes:
+        nodes_list[node.id] = ({
+            'longitude': node.longitude,
+            'latitude': node.latitude,
+            'name': node.name
+        })
+    loads = Load.query.all()
+
+    loads_list = []
+    for load in loads:
+        loads_list.append((load.start_node_id, load.end_node_id, load.id, load.length, load.flow))
+
+    return jsonify(result={'loads': loads_list, 'nodes': nodes_list})
+
+
 @jQuery.route('/add_node')
 def add_node():
     lng = float(request.args.get('lng'))
