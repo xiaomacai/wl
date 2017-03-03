@@ -1,6 +1,7 @@
 # coding: utf-8
 from . import map
 from flask import render_template
+from flask_login import login_required
 
 
 @map.route('/nodes')
@@ -9,6 +10,7 @@ def nodes():
 
 
 @map.route('/opt_nodes')
+@login_required
 def opt_nodes():
     return render_template('map/opt_nodes.html')
 
@@ -19,6 +21,7 @@ def loads():
 
 
 @map.route('/opt_loads')
+@login_required
 def opt_loads():
     return render_template('map/opt_loads.html')
 

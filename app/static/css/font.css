@@ -3,3 +3,16 @@ span.title {
     font-weight: bold;
     font-size: large;
 }
+
+.navbar-inverse {
+    background-color: #0767c8;
+    border-color: #0767c8;
+}
+
+.navbar .nav > li > a{
+    color: #ffffff;
+}
+
+.top-nav-dropdown {
+    display: block;
+}

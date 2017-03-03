@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}交通管制信息发布{% endblock %}
+
+{% block page_content %}
+    {% block scripts %}
+        {{ super() }}
+        <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=mYVGC2WXkR6sycVOmd0swObK"></script>
+        <script type="text/javascript" src={{ url_for('static', filename="js/jquery.js") }}></script>
+        <script type="text/javascript">$SCRIPT_ROOT = {{ request.script_root | tojson | safe }}</script>
+    {% endblock %}
+    <div id="allmap" style="width: 80%; height: 600px; float: left"></div>
+
+    <div id="information" style="width: 20%; height: 100px; float: right">
+        <p>
+        <ul>
+
+        </ul>
+        </p>
+    </div>
+
+    <script>
+    map = new BMap.Map("allmap", {enableMapClick: false}); // 关闭底图可点动能
+            map.enableScrollWheelZoom(true);       // 鼠标滚动缩放
+            var point = new BMap.Point(117.051534, 36.660632);
+            map.centerAndZoom(point, 16);
+    map.enableScrollWheelZoom(false);
+    </script>
+{% endblock %}

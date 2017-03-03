@@ -9,3 +9,8 @@ from . import main
 @main.route('/')
 def index():
     return render_template('index.html')
+
+
+@main.route('/information')
+def information():
+    return render_template('road_control.html')

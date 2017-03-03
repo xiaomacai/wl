@@ -25,7 +25,7 @@ def all_loads():
 
     loads_list = []
     for load in loads:
-        loads_list.append((load.start_node_id, load.end_node_id, load.id, load.length, load.flow))
+        loads_list.append((load.start_node_id, load.end_node_id, load.id, load.length, load.fwed_flow))
     return jsonify(result=list(set(loads_list)))
 
 
@@ -112,4 +112,9 @@ def remove_load():
 
     db.session.commit()
     return jsonify(result=1)
+
+
+@jQuery.route('/get_control_road')
+def get_control_road():
+    loads = Load.query.filter_by(control_type=1)
 
