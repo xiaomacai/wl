@@ -24,6 +24,9 @@ class Load(db.Model):
     control_end_time = db.Column(db.DATETIME)       # 管制结束时间，默认为当前时间)
     capacity = db.Column(db.INTEGER)            # 路段通行能力
 
+    shortest_path = db.Column(db.String(128))
+    shortest_path_time = db.Column(db.INTEGER)
+
     def __init__(self, **kwargs):
         super(Load, self).__init__(**kwargs)
         if self.length is not None:
@@ -123,10 +126,16 @@ class Node(db.Model):
         db.session.commit()
 
 
+class Permission:
+    USER = 0x01
+    GENERAT_MANAGER = 0x02      # 一般管理员，具有后台管理中节点等管理权限
+    ADMINISTRATOR = 0x80        # 超级管理员，具有包括用户及一般管理员在内的所有权限
+
+
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.INTEGER, primary_key=True)
-    name = db.Column(db.String(64), unique=True)
+    name = db.Column(db.String(64))
     password = db.Column(db.String(64))
 
     permissions = db.Column(db.INTEGER, default=Permission.USER)   # 管理员权限
@@ -157,12 +166,6 @@ class AnonymousUser(AnonymousUserMixin):
 
     def is_administrator(self):
         return False
-
-
-class Permission:
-    USER = 0x01
-    GENERAT_MANAGER = 0x02      # 一般管理员，具有后台管理中节点等管理权限
-    ADMINISTRATOR = 0x80        # 超级管理员，具有包括用户及一般管理员在内的所有权限
 
 
 @loginManager.user_loader
