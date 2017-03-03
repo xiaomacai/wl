@@ -4,6 +4,7 @@ from .forms import LogIn, SignUp
 from . import auth
 from ..models import User
 from flask_login import login_user, login_required, logout_user
+from ..decorators import admin_required
 
 
 @auth.route('/login', methods=['POST', 'GET'])
@@ -32,5 +33,12 @@ def signup():
         flash(u'对不起，您没有权限注册')
         return redirect(url_for('main.index'))
     return render_template('auth/signup.html', form=form)
+
+
+@auth.route('/user/<name>')
+def user(name):
+    user = User.query.filter_by(name=name).first()
+    return render_template('auth/user.html', user=user)
+
 
 

@@ -1,5 +1,6 @@
 # coding: utf-8
 from ..models import Permission
+
 """
 视图函数文件
 """

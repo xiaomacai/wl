@@ -1,0 +1,54 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}后台管理界面{% endblock %}
+
+{% block navbar %}
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">后台管理界面</a>
+            </div>
+            <div>
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href={{ url_for('admin.user') }}>用户管理</a></li>
+                    <li><a href={{ url_for('admin.data') }}>数据管理</a></li>
+                    <li><a href="#">SVN</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            数据库管理
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">jmeter</a></li>
+                            <li><a href="#">EJB</a></li>
+                            <li><a href="#">Jasper Report</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#">分离的链接</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#">另一个分离的链接</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+{% endblock navbar %}
+
+{% block content %}
+    <div class="container">
+        {% block page_content %}
+            {% block scripts %}
+                {{ super() }}
+                <script type="text/javascript" src={{ url_for('static', filename="js/jquery.js") }}></script>
+                <script type="text/javascript">$SCRIPT_ROOT = {{ request.script_root | tojson | safe }}</script>
+            {% endblock %}
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        {% endblock %}
+    </div>
+{% endblock %}

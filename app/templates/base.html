@@ -24,7 +24,7 @@
                         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                             <li><a href="{{ url_for('map.nodes') }}">显示节点</a></li>
                             {% if current_user.is_authenticated %}
-                            <li><a href="{{ url_for('map.opt_nodes') }}">管理节点</a></li>
+                                <li><a href="{{ url_for('map.opt_nodes') }}">管理节点</a></li>
                             {% endif %}
                         </ul>
                     </li>
@@ -36,7 +36,7 @@
                         <ul class="dropdown-menu">
                             <li><a href="{{ url_for('map.loads') }}">显示道路</a></li>
                             {% if current_user.is_authenticated %}
-                            <li><a href="{{ url_for('map.opt_loads') }}">管理道路</a></li>
+                                <li><a href="{{ url_for('map.opt_loads') }}">管理道路</a></li>
                             {% endif %}
                         </ul>
                     </li>
@@ -44,7 +44,9 @@
                     <li><a href="{{ url_for('map.flow') }}">交通流量</a></li>
                     <li><a href="{{ url_for('map.drive') }}">路书</a></li>
                     <li><a href="{{ url_for('main.information') }}">管制信息发布</a></li>
-
+                    {% if current_user.is_authenticated %}
+                        <li><a href="{{ url_for('auth.user', name=current_user.name) }}">个人主页</a></li>
+                    {% endif %}
                 </ul>
                 <ul class="navbar-nav nav navbar-right">
                     {% if current_user.is_authenticated %}
