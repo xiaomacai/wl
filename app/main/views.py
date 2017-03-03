@@ -1,4 +1,5 @@
 # coding: utf-8
+from ..models import Permission
 """
 视图函数文件
 """
@@ -14,3 +15,9 @@ def index():
 @main.route('/information')
 def information():
     return render_template('road_control.html')
+
+
+@main.app_context_processor
+def inject_permissions():
+    # 将Permission类引入上下文
+    return dict(Permission=Permission)

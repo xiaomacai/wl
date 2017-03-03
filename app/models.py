@@ -3,7 +3,7 @@
 db model文件
 """
 from . import db
-from flask_login import UserMixin
+from flask_login import UserMixin, AnonymousUserMixin
 from . import loginManager
 from random import randint
 from datetime import datetime
@@ -19,7 +19,7 @@ class Load(db.Model):
     fwed_flow = db.Column(db.FLOAT)          # 经过fw分配后的交通流量
     free_flow_time = db.Column(db.FLOAT)     # 自由流时间
     travel_time = db.Column(db.FLOAT)        # 路段旅行时间
-    control_type = db.Column(db.INTEGER)     # 管制类型（2为全管制，1为局部管制,默认为0 不管制）
+    control_type = db.Column(db.INTEGER, default=0)     # 管制类型（2为全管制，1为局部管制,默认为0 不管制）
     control_start_time = db.Column(db.DATETIME)     # 管制开始时间（默认为当前时间)
     control_end_time = db.Column(db.DATETIME)       # 管制结束时间，默认为当前时间)
     capacity = db.Column(db.INTEGER)            # 路段通行能力
@@ -126,8 +126,43 @@ class Node(db.Model):
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.INTEGER, primary_key=True)
-    name = db.Column(db.String(64))
+    name = db.Column(db.String(64), unique=True)
     password = db.Column(db.String(64))
+
+    permissions = db.Column(db.INTEGER, default=Permission.USER)   # 管理员权限
+
+    def __init__(self, **kwargs):
+        super(User, self).__init__(**kwargs)
+        if self.name in ['xiaoming', 'wanjun']:
+            self.permission = Permission.ADMINISTRATOR
+
+    def can(self, permissions):
+        return self.permissions is not None and \
+               (self.permissions & permissions) == permissions
+
+    def is_administrtor(self):
+        """
+        验证用户是否具有管理员权限
+        :return:
+        """
+        return self.can(Permission.ADMINISTRATOR)
+
+
+class AnonymousUser(AnonymousUserMixin):
+    """
+    这是匿名用户无管理员权限
+    """
+    def can(self, permissions):
+        return False
+
+    def is_administrator(self):
+        return False
+
+
+class Permission:
+    USER = 0x01
+    GENERAT_MANAGER = 0x02      # 一般管理员，具有后台管理中节点等管理权限
+    ADMINISTRATOR = 0x80        # 超级管理员，具有包括用户及一般管理员在内的所有权限
 
 
 @loginManager.user_loader

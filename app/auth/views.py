@@ -1,6 +1,6 @@
 # coding: utf-8
 from flask import render_template, redirect, url_for, flash
-from .forms import LogIn
+from .forms import LogIn, SignUp
 from . import auth
 from ..models import User
 from flask_login import login_user, login_required, logout_user
@@ -23,3 +23,14 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('main.index'))
+
+
+@auth.route('/signup')
+def signup():
+    form = SignUp()
+    if form.validate_on_submit():
+        flash(u'对不起，您没有权限注册')
+        return redirect(url_for('main.index'))
+    return render_template('auth/signup.html', form=form)
+
+
