@@ -22,6 +22,7 @@ class Load(db.Model):
     control_type = db.Column(db.INTEGER)     # 管制类型（2为全管制，1为局部管制,默认为0 不管制）
     control_start_time = db.Column(db.DATETIME)     # 管制开始时间（默认为当前时间)
     control_end_time = db.Column(db.DATETIME)       # 管制结束时间，默认为当前时间)
+    capacity = db.Column(db.INTEGER)            # 路段通行能力
 
     def __init__(self, **kwargs):
         super(Load, self).__init__(**kwargs)
@@ -31,6 +32,16 @@ class Load(db.Model):
             self.control_type = 0
             self.control_start_time = datetime.utcnow()
             self.control_end_time = datetime.utcnow()
+
+    @staticmethod
+    def insert_capacity():
+        from data import roads_capacity
+        for k, v in roads_capacity().iteritems():
+            for k2, v2 in v.iteritems():
+                load = Load.query.filter_by(start_node_id=int(k), end_node_id=int(k2)).first()
+                load.capacity = v2
+                db.session.add(load)
+        db.session.commit()
 
     @staticmethod
     def insert_flow():
@@ -101,6 +112,15 @@ class Node(db.Model):
     latitude = db.Column(db.FLOAT, nullable=False)   # 纬度
 
     pd = db.Column(db.INTEGER)  # 节点周围人口密集程度
+
+    @staticmethod
+    def insert_pd():
+        from data import pd
+        for k, v in pd.iteritems():
+            node = Node.query.filter_by(id=int(k)).first()
+            node.pd = v
+            db.session.add(node)
+        db.session.commit()
 
 
 class User(UserMixin, db.Model):
