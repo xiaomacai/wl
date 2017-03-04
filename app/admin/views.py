@@ -27,10 +27,15 @@ def data():
     res = []
     for item in loads:
         res.append({'start_node_id': item.start_node_id, 'end_node_id': item.end_node_id,
-                    'fwed_flow': item.fwed_flow, 'free_flow_time': item.free_flow_time,
+                    'fwed_flow': int(item.fwed_flow), 'free_flow_time': item.free_flow_time,
                     'capacity': item.capacity, 'control_type': item.control_type})
+    path = ShortestPath.query.all()
+    res2 = []
+    for item in path:
+        res2.append({'start_node_id': item.start_node_id, 'end_node_id': item.end_node_id,
+                    'path_time': item.path_time, 'path': item.path})
 
-    return render_template('admin/data.html', result=res)
+    return render_template('admin/data.html', result={'res': res, 'res2': res2})
 
 
 @admin.route('/experiment_data')
@@ -69,3 +74,16 @@ def add_user():
     u = User(name=name, password=password)
     db.session.add(u)
     db.session.commit()
+
+
+@admin.route('/control_model')
+@admin_required
+def control_model():
+    return render_template('admin/control_model.html')
+
+
+@admin.route('/model_parameters')
+@admin_required
+def model_parameters():
+    return render_template('admin/model_parameters.html')
+

@@ -3,7 +3,6 @@
 .idea/
 
 # database files
-*.sqlite
 migrations
 
 # virtual interpreter

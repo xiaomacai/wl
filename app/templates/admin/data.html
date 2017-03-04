@@ -3,105 +3,138 @@
 {% block title %}数据管理界面{% endblock %}
 
 {% block page_content %}
-
-    <script type="text/javascript" src={{ url_for('static', filename="js/jquery.js") }}></script>
     <link rel="stylesheet" href={{ url_for('static', filename="css/bootstrap.min.css") }}/>
     <script type="text/javascript">$SCRIPT_ROOT = {{ request.script_root | tojson | safe }}</script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <button type="button" class="btn btn-primary" id="add">添加新道路数据</button>
-    <button type="button" class="btn btn-primary" id="manage">管理已有道路数据</button>
-    <br><br>
 
-    <div id="add" style="display: none">
-        <form class="form-horizontal">
-            <div class="control-group">
-                <label class="control-label" for="inputEmail">始点</label>
-                <div class="controls">
-                    <input type="text" id="inputEmail" placeholder="始点">
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label" for="inputEmail">终点</label>
-                <div class="controls">
-                    <input type="text" id="inputEmail" placeholder="终点">
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label" for="inputEmail">流量</label>
-                <div class="controls">
-                    <input type="text" id="inputEmail" placeholder="流量">
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label" for="inputEmail">自由流时间</label>
-                <div class="controls">
-                    <input type="text" id="inputEmail" placeholder="自由流时间">
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label" for="inputPassword">通行能力</label>
-                <div class="controls">
-                    <input type="password" id="inputPassword" placeholder="通行能力">
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label" for="inputEmail">管制方式</label>
-                <div class="controls">
-                    <input type="text" id="inputEmail" placeholder="管制方式">
-                </div>
-            </div>
-            <div class="control-group">
-                <div class="controls">
-                    <button type="submit" class="btn btn-info">添加</button>
-                </div>
-            </div>
-        </form>
-    </div>
+    <div class="container">
+        <button type="button" class="btn btn-primary" id="add">添加新道路数据</button>
+        <button type="button" class="btn btn-primary" id="manage">管理已有道路数据</button>
+        <button type="button" class="btn btn-primary" id="path">最短路径</button>
+        <br><br>
 
-    <div id="manage" style="display: none">
-        <table class="table table-bordered">
-            <thead>
-            <tr>
-                <th>始点</th>
-                <th>终点</th>
-                <th>流量</th>
-                <th>自由流时间</th>
-                <th>通行能力</th>
-                <th>管制方式</th>
-                <th>修改</th>
-                <th>删除</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for res in result %}
+        <div id="add" style="display: none">
+            <form class="form-horizontal">
+                <div class="control-group">
+                    <label class="control-label" for="inputEmail">始点</label>
+                    <div class="controls">
+                        <input type="text" id="inputEmail" placeholder="始点">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="inputEmail">终点</label>
+                    <div class="controls">
+                        <input type="text" id="inputEmail" placeholder="终点">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="inputEmail">流量</label>
+                    <div class="controls">
+                        <input type="text" id="inputEmail" placeholder="流量">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="inputEmail">自由流时间</label>
+                    <div class="controls">
+                        <input type="text" id="inputEmail" placeholder="自由流时间">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="inputPassword">通行能力</label>
+                    <div class="controls">
+                        <input type="password" id="inputPassword" placeholder="通行能力">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="inputEmail">管制方式</label>
+                    <div class="controls">
+                        <input type="text" id="inputEmail" placeholder="管制方式">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="controls">
+                        <button type="submit" class="btn btn-info">添加</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div id="manage" style="display: none">
+            <table class="table table-bordered">
+                <thead>
                 <tr>
-                    <td><input type="text" style="width: 40px" value={{ res.start_node_id }}></td>
-                    <td><input type="text" style="width: 40px" value={{ res.end_node_id }}></td>
-                    <td><input type="text" style="width: 70px" value={{ res.fwed_flow }}></td>
-                    <td><input type="text" style="width: 70px" value={{ res.free_flow_time }}></td>
-                    <td><input type="text" style="width: 70px" value={{ res.capacity }}></td>
-                    <td><input type="text" style="width: 40px" value={{ res.control_type }}></td>
-                    <td>
-                        <button class="btn btn-warning" id="alert">修改</button>
-                    </td>
-                    <td>
-                        <button class="btn btn-danger" id="remove">删除</button>
-                    </td>
+                    <th>始点</th>
+                    <th>终点</th>
+                    <th>流量</th>
+                    <th>自由流时间</th>
+                    <th>通行能力</th>
+                    <th>管制方式</th>
+                    <th>修改</th>
+                    <th>删除</th>
                 </tr>
-            {% endfor %}
-            </tbody>
+                </thead>
+                <tbody>
+                {% for res in result['res'] %}
+                    <tr class="info">
+                        <td><input type="text" style="width: 40px" value={{ res.start_node_id }}></td>
+                        <td><input type="text" style="width: 40px" value={{ res.end_node_id }}></td>
+                        <td><input type="text" style="width: 70px" value={{ res.fwed_flow }}></td>
+                        <td><input type="text" style="width: 70px" value={{ res.free_flow_time }}></td>
+                        <td><input type="text" style="width: 70px" value={{ res.capacity }}></td>
+                        <td><input type="text" style="width: 40px" value={{ res.control_type }}></td>
+                        <td>
+                            <button class="btn btn-warning" id="alert">修改</button>
+                        </td>
+                        <td>
+                            <button class="btn btn-danger" id="remove">删除</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
 
-        </table>
+            </table>
+        </div>
+
+        <div id="path" style="display: none">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>始点</th>
+                    <th>终点</th>
+                    <th>通行时间</th>
+                    <th>最短路径</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for res in result['res2'] %}
+                    <tr class="success">
+                        <td>{{ res.start_node_id }}</td>
+                        <td>{{ res.end_node_id }}</td>
+                        <td>{{ res.path_time }}</td>
+                        <td>{{ res.path }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <script>
         $('button#add').bind('click', function () {
             $('div#manage').hide();
+            $('div#path').hide();
             $('div#add').show()
         });
 
         $('button#manage').bind('click', function () {
             $('div#manage').show();
+            $('div#path').hide();
+            $('div#add').hide()
+        });
+
+        $('button#path').bind('click', function () {
+            $('div#manage').hide();
+            $('div#path').show();
             $('div#add').hide()
         });
 
