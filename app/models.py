@@ -2,7 +2,7 @@
 """
 db model文件
 """
-from . import db
+from . import db, loginManager
 from flask_login import UserMixin, AnonymousUserMixin
 from . import loginManager
 from random import randint
@@ -78,7 +78,7 @@ class Load(db.Model):
         for k, v in fwed_flows().iteritems():
             for k2, v2 in v.iteritems():
                 load = Load.query.filter_by(start_node_id=int(k), end_node_id=int(k2)).first()
-                load.fwed_flows = v2
+                load.fwed_flow = v2
                 db.session.add(load)
         db.session.commit()
 
@@ -149,7 +149,7 @@ class User(UserMixin, db.Model):
         return self.permissions is not None and \
                (self.permissions & permissions) == permissions
 
-    def is_administrtor(self):
+    def is_administrator(self):
         """
         验证用户是否具有管理员权限
         :return:
@@ -166,6 +166,8 @@ class AnonymousUser(AnonymousUserMixin):
 
     def is_administrator(self):
         return False
+
+loginManager.anonymous_user = AnonymousUser
 
 
 @loginManager.user_loader

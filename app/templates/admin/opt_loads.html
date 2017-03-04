@@ -1,0 +1,112 @@
+{% extends "admin/index.html" %}
+{% block title %}操作道路{% endblock %}
+
+{% block page_content %}
+    <div>
+        <form action="">
+            始点: <input type="text" id="start_node_id" placeholder="请输入始点">
+            终点: <input type="text" id="end_node_id" placeholder="请输入终点">
+            <input type="button" id="add_load" value="添加">
+            <input type="button" id="remove_load" value="删除">
+        </form>
+    </div>
+    <br>
+
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=mYVGC2WXkR6sycVOmd0swObK"></script>
+    <script type="text/javascript" src={{ url_for('static', filename="js/jquery.js") }}></script>
+    <script type="text/javascript">$SCRIPT_ROOT = {{ request.script_root | tojson | safe }}</script>
+
+    <div id="allmap" style="width: 100%; height: 600px; float: left"></div>
+    <script>
+        var nodes;
+        $(function () {
+            $.getJSON($SCRIPT_ROOT + '/jquery/all_nodes', {}, function (data) {
+                {#                    $('#result').text(data.result);#}
+                init_map();
+                nodes = data.result;
+                show_nodes(data.result);
+            });
+
+            $.getJSON($SCRIPT_ROOT + '/jquery/all_loads', {}, function (data) {
+                show_loads(data.result);
+            });
+
+            $('input#add_load').bind('click', function () {
+                var res = get_length();
+
+                $.getJSON($SCRIPT_ROOT + '/jquery/add_load', {
+                    start_node_id: res[0], end_node_id: res[1], length: res[2]
+                }, function (data) {
+                    if (data.result === 1) {
+                        alert('添加成功')
+                    } else {
+                        alert('添加失败')
+                    }
+                });
+            });
+
+            $('input#remove_load').bind('click', function () {
+                var res = get_length();
+                $.getJSON($SCRIPT_ROOT + '/jquery/remove_load', {
+                    start_node_id: res[0], end_node_id: res[1]
+                }, function (data) {
+                    if (data.result === 1) {
+                        alert('删除成功')
+                    } else {
+                        alert('删除失败')
+                    }
+                });
+            });
+            return false;
+        });
+
+        function show_loads(loads_list) {
+            // 参数为节点编号列表，[[1,2],[2,1]]表示路1->2、路2->1
+            loads_list.forEach(function (e) {
+                var pointA = new BMap.Point(nodes[e[0]].longitude, nodes[e[0]].latitude);
+                var pointB = new BMap.Point(nodes[e[1]].longitude, nodes[e[1]].latitude);
+                var polyline = new BMap.Polyline([pointA, pointB], {
+                    strokeColor: "green",
+                    strokeWeight: 6,
+                    strokeOpacity: 0.5
+                });  //定义折线
+                map.addOverlay(polyline);   // 添加折线（道路)
+            })
+        }
+
+        function init_map() {
+            map = new BMap.Map("allmap", {enableMapClick: false}); // 关闭底图可点动能
+            map.enableScrollWheelZoom(true);       // 鼠标滚动缩放
+            var point = new BMap.Point(117.051534, 36.661632);
+            map.centerAndZoom(point, 16);
+        }
+        function show_nodes(nodes_list) {
+            // 节点标号列表，[1,2,3]表示节点1,2,3
+            var id, lng, lat;
+            for (id in nodes_list) {
+                lng = nodes_list[id]['longitude'];
+                lat = nodes_list[id]['latitude'];
+                add_lay(id, lng, lat);
+            }
+        }
+        function add_lay(id, lng, lat) {
+            // 在（lng,lat)的点标注
+            point = new BMap.Point(Number(lng), Number(lat));
+            marker = new BMap.Marker(point);
+            marker.setLabel(new BMap.Label(id));    //添加标注标签为节点编号
+            map.addOverlay(marker);
+        }
+        function get_length() {
+            var s = $('input#start_node_id').val();
+            var e = $('input#end_node_id').val();
+            var s_lng = nodes[s]['longitude'];
+            var s_lat = nodes[s]['latitude'];
+            var e_lng = nodes[e]['longitude'];
+            var e_lat = nodes[e]['latitude'];
+            var pointS = new BMap.Point(s_lng, s_lat);
+            var pointE = new BMap.Point(e_lng, e_lat);
+            var length = map.getDistance(pointS, pointE).toFixed(2);
+            return [s, e, length];
+        }
+    </script>
+{% endblock %}

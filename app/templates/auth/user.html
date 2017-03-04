@@ -7,7 +7,7 @@
     {% else %}
         {{ current_user.name }}
     {% endif %}
-    {% if current_user.is_administrtor() and current_user.name==user.name%}
+    {% if current_user.is_administrator() and current_user.name==user.name%}
         <a href={{ url_for('admin.index') }}>进入管理员界面</a>
     {% endif %}
 {% endblock %}

@@ -1,0 +1,115 @@
+{% extends "admin/index.html" %}
+{% block title %}节点管理{% endblock %}
+
+{% block page_content %}
+    <div>
+        <form action="">
+            经度: <input type="text" id="longitude" size="12" placeholder="单击下图标注">
+            纬度: <input type="text" id="latitude" size="12" placeholder="获取经纬度">
+            地名: <input type="text" id="address" size="34" placeholder="双击下图任意位置标注点">
+            <input type="button" id="add_node" value="添加">
+        </form>
+        <br>
+        <form action="">
+            节点编号： <input type="text" id="node_id" placeholder="输入图中标注数字">
+            <input type="button" id="remove_node" value="删除">
+        </form>
+    </div>
+    <br>
+    <a href="{{ url_for('map.opt_nodes') }}" type="hidden"></a>
+
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=mYVGC2WXkR6sycVOmd0swObK"></script>
+    <script type="text/javascript" src={{ url_for('static', filename="js/jquery.js") }}></script>
+    <script type="text/javascript">$SCRIPT_ROOT = {{ request.script_root | tojson | safe }}</script>
+
+    <div id="allmap" style="width: 100%; height: 600px; float: left"></div>
+
+    <script>
+        var nodes;
+        var map = new BMap.Map("allmap", {enableMapClick: false}); // 关闭底图可点动能
+        map.enableScrollWheelZoom(true);       // 鼠标滚动缩放
+        var point = new BMap.Point(117.051534, 36.661632);
+        map.centerAndZoom(point, 16);
+
+        var geoc = new BMap.Geocoder(); // 地址解析器实例
+
+        map.addEventListener("ondblclick", function (e) {
+            $('input#longitude').val(e.point.lng);
+            $('input#latitude').val(e.point.lat);
+
+            var pt = e.point;
+            geoc.getLocation(pt, function (rs) {
+                var addComp = rs.addressComponents;
+                var address = addComp.province + ", " + addComp.city + ", " + addComp.district + ", " + addComp.street + ", " + addComp.streetNumber;
+                $('input#address').val(address);
+            });
+            add_lay('', e.point.lng, e.point.lat);
+        });
+
+        {#        map.addEventListener("click", function (e) {#}
+        {#            $('input#longitude').val(e.point.lng);#}
+        {#            $('input#latitude').val(e.point.lat);#}
+        {#            $('input#address').val('');#}
+        {#        });#}
+
+        $('input#add_node').bind('click', function () {
+            // 点击添加按钮添加节点
+            var lng = $('input#longitude').val();
+            var lat = $('input#latitude').val();
+            var address = $('input#address').val();
+            $.getJSON($SCRIPT_ROOT + '/jquery/add_node', {
+                lng: lng, lat: lat, address: address
+            }, function (data) {
+                show_nodes(data.result);
+            })
+        });
+
+        $('input#remove_node').bind('click', function () {
+            // 删除节点
+            var id = $('input#node_id').val();
+            $.getJSON($SCRIPT_ROOT + '/jquery/remove_node', {
+                id: id
+            }, function (data) {
+                if (data.result === 1) {
+                    alert('删除成功')
+                } else {
+                    alert('删除失败')
+                }
+                $.reload();
+            })
+        });
+
+        $(function () {
+            $.getJSON($SCRIPT_ROOT + '/jquery/all_nodes', {}, function (data) {
+                {#                    $('#result').text(data.result);#}
+                nodes = data.result;
+                show_nodes(data.result);
+            });
+            return false;
+        });
+
+        function show_nodes(nodes_list) {
+            var id, lng, lat;
+            for (id in nodes_list) {
+                lng = nodes_list[id]['longitude'];
+                lat = nodes_list[id]['latitude'];
+                add_lay(id, lng, lat);
+            }
+        }
+
+        function add_lay(id, lng, lat) {
+            // 在（lng,lat)的点标注
+            point = new BMap.Point(Number(lng), Number(lat));
+            marker = new BMap.Marker(point);
+            marker.setLabel(new BMap.Label(id));    //添加标注标签为节点编号
+            map.addOverlay(marker);
+            marker.addEventListener('click', attribute);    // 为marker添加事件，点击alert经纬度
+        }
+        function attribute(e) {
+            var p = e.target;
+            $('input#longitude').val(p.getPosition().lng);
+            $('input#latitude').val(p.getPosition().lat);
+            $('input#address').val(p.getPosition().address);
+        }
+    </script>
+{% endblock %}
