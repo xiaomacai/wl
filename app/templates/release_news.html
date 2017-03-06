@@ -2,14 +2,106 @@
 {% block title %}信息发布页面{% endblock %}
 
 {% block page_content %}
-    <button class="release"></button>
-    <button class=""></button>
-    <div>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=mYVGC2WXkR6sycVOmd0swObK"></script>
+    <script type="text/javascript" src={{ url_for('static', filename="js/jquery.js") }}></script>
+    <script type="text/javascript">$SCRIPT_ROOT = {{ request.script_root | tojson | safe }}</script>
+    <script type="text/javascript" src="http://api.map.baidu.com/library/Heatmap/2.0/src/Heatmap_min.js"></script>
+
+    <div id="release">
+        <h4><strong>发布施工信息</strong></h4>
+        <br>
         <form action="">
-            <input type="text" value="始点">
-            <input type="text" value="终点">
-            <input type="text" value="施工时间">
-            <input type="button" value="发布">
+            始点：
+            <input type="text" placeholder="始点">
+            <br>
+            终点：
+            <input type="text" placeholder="终点">
+            <br>
+            施工开始时间：
+            <input type="date" placeholder="施工开始时间" size="20">
+            <br>
+            施工结束时间：
+            <input type="date" placeholder="施工结束时间">
+            <br>
+            <button id="release" class="btn btn-info">发布</button>
         </form>
     </div>
+    <div id="send_mail">
+
+    </div>
+    <br><br>
+    <div id="allmap" style="width: 100%; height: 600px; float: left"></div>
+    <script>
+        var map = new BMap.Map("allmap"); // 关闭底图可点动能
+        map.enableScrollWheelZoom();       // 鼠标滚动缩放
+        var point = new BMap.Point(117.051534, 36.661632);
+        map.centerAndZoom(point, 16);
+
+        function get_points() {
+            var points = [];
+
+            $.ajax({
+                url: $SCRIPT_ROOT + '/jquery/all_loads_nodes',
+                data: {},
+                async: false,
+                dataType: 'json',
+                success: function (data) {
+                    var nodes = data.result['nodes'];
+                    var loads = data.result['loads'];
+                    var step_len = 30;
+                    loads.forEach(function (load) {
+                        var start_id = load[0];
+                        var end_id = load[1];
+                        var start_lng = Number(nodes[start_id]['longitude']);
+                        var start_lat = Number(nodes[start_id]['latitude']);
+                        var end_lng = Number(nodes[end_id]['longitude']);
+                        var end_lat = Number(nodes[end_id]['latitude']);
+                        var k = (start_lat - end_lat) / (start_lng - end_lng);
+                        var step = (start_lng - end_lng) / step_len;
+                        var flow = load[4];
+
+                        for (var i = 0; i <= step_len; i++) {
+                            var point = {
+                                "lng": Number((end_lng + i * step).toFixed(6)),
+                                "lat": Number((k * i * step + end_lat).toFixed(6)),
+                                "count": parseInt(flow / 150)
+                            };
+                            points.push(point);
+                        }
+                    });
+                }
+            });
+            return points;
+        }
+
+        var points = get_points();
+        show_heat_map(points);
+
+        function show_heat_map(points) {
+            var heatmapOverlay = new BMapLib.HeatmapOverlay({"radius": 20});
+            map.addOverlay(heatmapOverlay);
+            heatmapOverlay.setDataSet({data: points, max: 100});
+            heatmapOverlay.show();
+        }
+
+        $.getJSON($SCRIPT_ROOT + '/jquery/all_nodes', {}, function (data) {
+            show_nodes(data.result);
+        });
+
+        function show_nodes(nodes_list) {
+            var id, lng, lat;
+            for (id in nodes_list) {
+                lng = nodes_list[id]['longitude'];
+                lat = nodes_list[id]['latitude'];
+                add_lay(id, lng, lat);
+            }
+        }
+        function add_lay(id, lng, lat) {
+            // 在（lng,lat)的点标注
+            point = new BMap.Point(Number(lng), Number(lat));
+            marker = new BMap.Marker(point);
+            marker.setLabel(new BMap.Label(id));    //添加标注标签为节点编号
+            map.addOverlay(marker);
+        }
+    </script>
 {% endblock %}

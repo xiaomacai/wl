@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}
+    {% if current_user.permissions == 1 %}
+    用户反馈
+    {% else %}
+    施工方反馈
+    {% endif %}
+{% endblock title%}
+
+{% block page_content %}
+    <div class="container col-md-4">
+    <p>
+    <h3>
+    {% if current_user.permissions == 1 %}
+    用户反馈
+    {% else %}
+    施工方反馈
+    {% endif %}
+</h3></p>
+<br>
+{{ wtf.quick_form(form) }}
+</div>
+{% endblock %}

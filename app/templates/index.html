@@ -1,11 +1,71 @@
 {% extends "base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
+
 {% block title %}首页{% endblock %}
 
 {% block page_content %}
-    <div class="col-md-4">
-        {% if form %}
-            {{ wtf.quick_form(form) }}
-        {% endif %}
-    </div>
+    {% block scripts %}
+        {{ super() }}
+        <script type="text/javascript" src={{ url_for('static', filename="js/jquery.js") }}></script>
+        <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=mYVGC2WXkR6sycVOmd0swObK"></script>
+        {#        热力图js文件#}
+        <script type="text/javascript" src="http://api.map.baidu.com/library/Heatmap/2.0/src/Heatmap_min.js"></script>
+        <script type="text/javascript">$SCRIPT_ROOT = {{ request.script_root | tojson | safe }}</script>
+    {% endblock %}
+
+{#    <input type="button" value="显示热力图" id="show_heat_map">#}
+    <div id="allmap" style="width: 100%; height: 600px; float: left"></div>
+
+    <script>
+        var map = new BMap.Map("allmap"); // 关闭底图可点动能
+        map.enableScrollWheelZoom();       // 鼠标滚动缩放
+        var point = new BMap.Point(117.051534, 36.661632);
+        map.centerAndZoom(point, 16);
+
+        function get_points() {
+            var points = [];
+
+            $.ajax({
+                url: $SCRIPT_ROOT + '/jquery/all_loads_nodes',
+                data: {},
+                async: false,
+                dataType: 'json',
+                success: function (data) {
+                    var nodes = data.result['nodes'];
+                    var loads = data.result['loads'];
+                    var step_len = 30;
+                    loads.forEach(function (load) {
+                        var start_id = load[0];
+                        var end_id = load[1];
+                        var start_lng = Number(nodes[start_id]['longitude']);
+                        var start_lat = Number(nodes[start_id]['latitude']);
+                        var end_lng = Number(nodes[end_id]['longitude']);
+                        var end_lat = Number(nodes[end_id]['latitude']);
+                        var k = (start_lat - end_lat) / (start_lng - end_lng);
+                        var step = (start_lng - end_lng) / step_len;
+                        var flow = load[4];
+
+                        for (var i = 0; i <= step_len; i++) {
+                            var point = {
+                                "lng": Number((end_lng + i * step).toFixed(6)),
+                                "lat": Number((k * i * step + end_lat).toFixed(6)),
+                                "count": parseInt(flow / 150)
+                            };
+                            points.push(point);
+                        }
+                    });
+                }
+            });
+            return points;
+        }
+
+        var points = get_points();
+        show_heat_map(points);
+
+        function show_heat_map(points) {
+            var heatmapOverlay = new BMapLib.HeatmapOverlay({"radius": 20});
+            map.addOverlay(heatmapOverlay);
+            heatmapOverlay.setDataSet({data: points, max: 100});
+            heatmapOverlay.show();
+        }
+    </script>
 {% endblock %}

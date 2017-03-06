@@ -26,11 +26,9 @@
                 nodes = data.result;
                 show_nodes(data.result);
             });
-
             $.getJSON($SCRIPT_ROOT + '/jquery/all_loads', {}, function (data) {
                 show_loads(data.result);
             });
-
             $('input#add_load').bind('click', function () {
                 var res = get_length();
 

@@ -151,15 +151,16 @@ class User(UserMixin, db.Model):
             self.permission = Permission.ADMINISTRATOR
 
     def can(self, permissions):
-        return self.permissions is not None and \
-               (self.permissions & permissions) == permissions
+        # return self.permissions is not None and \
+        #        (self.permissions & permissions) == permissions
+        return permissions == Permission.ADMINISTRATOR
 
     def is_administrator(self):
         """
         验证用户是否具有管理员权限
         :return:
         """
-        return self.can(Permission.ADMINISTRATOR)
+        return self.can(self.permissions)
 
 
 class AnonymousUser(AnonymousUserMixin):
@@ -179,6 +180,37 @@ loginManager.anonymous_user = AnonymousUser
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+
+class FeedBack(db.Model):
+    """
+    用户反馈表
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer)
+    road_name = db.Column(db.String(64))
+    content = db.Column(db.Text)
+    time = db.Column(db.DateTime)
+
+    def __init__(self, **kwargs):
+        super(FeedBack, self).__init__(**kwargs)
+        self.time = datetime.utcnow()
+
+
+class FeedBack2(db.Model):
+    """
+    施工方反馈表
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer)
+    road_name = db.Column(db.String(64))
+    jindu = db.Column(db.String(10))
+    finished_time = db.Column(db.String(10))
+    content = db.Column(db.Text)
+    time = db.Column(db.DateTime)
+
+    def __init__(self, **kwargs):
+        super(FeedBack2, self).__init__(**kwargs)
+        self.time = datetime.utcnow()
 
 
 
