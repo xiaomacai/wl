@@ -2,8 +2,6 @@
 
 {% block title %}用户管理界面{% endblock %}
 
-
-
 {% block page_content %}
     <button type="button" class="btn btn-primary" id="add">添加新用户</button>
     <button type="button" class="btn btn-primary" id="manage">管理已有用户</button>
@@ -13,6 +11,8 @@
         <form action="" class="form-group">
             名字：
             <input type="text" id="name"><br><br>
+            邮箱：
+            <input type="text" id="email"><br><br>
             密码：
             <input type="text" id="password"><br><br>
             <input type="button" value="添加" class="btn-primary" id="add_user">
@@ -24,7 +24,9 @@
             <thead>
             <tr>
                 <th>用户名</th>
-                <th>密码</th>
+                <th>地址</th>
+                <th>年龄</th>
+                <th>性别</th>
                 <th>权限</th>
                 <th>修改</th>
                 <th>删除</th>
@@ -34,8 +36,18 @@
             {% for user in users %}
                 <tr>
                     <td><input type="text" value={{ user.name }}></td>
-                    <td><input type="text" value={{ user.password }}></td>
-                    <td><input type="text" value={{ user.permissions }}></td>
+                    <td><input type="text" value={{ user.location }}></td>
+                    <td><input type="text" value={{ user.age }}></td>
+                    <td><input type="text" value={{ user.sex }}></td>
+                    <td><input type="text" value=
+                            {% if user.permissions == 128 %}
+                                管理员
+                            {% elif user.permissions == 2 %}
+                               施工方
+                            {% else %}
+                               普通用户
+                            {% endif %}
+                    ></td>
                     <td>
                         <button class="btn btn-warning" id="alert">修改</button>
                     </td>
@@ -62,9 +74,10 @@
 
         $('input#add_user').bind('click', function () {
             var name = $('input#name').val();
+            var email = $('input#email').val();
             var password = $('input#password').val();
             $.getJSON($SCRIPT_ROOT + '/admin/add_user',
-                    {name: name, password: password})
+                {name: name, password: password})
         });
 
         $(function () {

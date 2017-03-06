@@ -33,14 +33,15 @@
                     <li><a href={{ url_for('admin.opt_loads') }}>管制方案</a></li>
                 </ul>
             </li>
-            <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">交通预警管理<span
-                    class="caret"></span></a>
-                <ul class="dropdown-menu">
-                    <li><a href={{ url_for('admin.opt_nodes') }}>管制区域划定</a></li>
-                    <li><a href={{ url_for('admin.opt_loads') }}>交通状况预警发布</a></li>
-                </ul>
-            </li>
-            <li><a href={{ url_for('admin.index') }}>交通预警管理</a></li>
+{#            <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">交通预警管理<span#}
+{#                    class="caret"></span></a>#}
+{#                <ul class="dropdown-menu">#}
+{#                    <li><a href={{ url_for('admin.opt_nodes') }}>管制区域划定</a></li>#}
+{#                    <li><a href={{ url_for('admin.opt_loads') }}>交通状况预警发布</a></li>#}
+{#                </ul>#}
+{#            </li>#}
+            <li><a href={{ url_for('main.release_news') }}>信息发布</a></li>
+            <li><a href={{ url_for('admin.index') }}>模型计算</a></li>
 
             <li><a href={{ url_for('main.index') }}>返回前台</a></li>
         </ul>

@@ -22,3 +22,8 @@ def information():
 def inject_permissions():
     # 将Permission类引入上下文
     return dict(Permission=Permission)
+
+
+@main.route('/release_news')
+def release_news():
+    return render_template('release_news.html')

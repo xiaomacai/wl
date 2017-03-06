@@ -43,9 +43,12 @@
                     <li><a href="{{ url_for('map.disaster_rescue_map') }}">灾区</a></li>
                     <li><a href="{{ url_for('map.flow') }}">交通流量</a></li>
                     <li><a href="{{ url_for('map.drive') }}">路书</a></li>
-                    <li><a href="{{ url_for('main.information') }}">管制信息发布</a></li>
+{#                    <li><a href="{{ url_for('main.information') }}">管制信息发布</a></li>#}
                     {% if current_user.is_authenticated %}
                         <li><a href="{{ url_for('auth.user', name=current_user.name) }}">个人主页</a></li>
+                    {% endif %}
+                    {% if current_user.is_administrator()%}
+                        <li><a href={{ url_for('admin.index') }}>进入管理员界面</a></li>
                     {% endif %}
                 </ul>
                 <ul class="navbar-nav nav navbar-right">

@@ -70,8 +70,9 @@ def opt_nodes():
 @admin.route('/add_user')
 def add_user():
     name = request.args.get('name')
+    email = request.args.get('email')
     password = request.args.get('password')
-    u = User(name=name, password=password)
+    u = User(name=name, password=password, mail=email)
     db.session.add(u)
     db.session.commit()
 

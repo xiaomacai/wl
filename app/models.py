@@ -137,6 +137,11 @@ class User(UserMixin, db.Model):
     id = db.Column(db.INTEGER, primary_key=True)
     name = db.Column(db.String(64))
     password = db.Column(db.String(64))
+    email = db.Column(db.String(64))
+
+    location = db.Column(db.String(128))
+    sex = db.Column(db.String(10))
+    age = db.Column(db.Integer)
 
     permissions = db.Column(db.INTEGER, default=Permission.USER)   # 管理员权限
 
