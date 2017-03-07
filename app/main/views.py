@@ -1,9 +1,9 @@
 # coding: utf-8
-from ..models import Permission, FeedBack, FeedBack2
+from ..models import Permission, FeedBack, FeedBack2, FeedBack3
 from flask import render_template, redirect, url_for
-from flask_login import current_user
+from flask_login import current_user, login_required
 from . import main
-from .forms import FeedBackForm, FeedBack2Form
+from .forms import FeedBackForm, FeedBack2Form, FeedBack3Form
 from .. import db
 
 """
@@ -32,7 +32,8 @@ def release_news():
     return render_template('release_news.html')
 
 
-@main.route('/feedback')
+@main.route('/feedback', methods=['GET', 'POST'])
+@login_required
 def feedback():
     if current_user.permissions == Permission.USER:
         form = FeedBackForm()

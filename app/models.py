@@ -213,6 +213,19 @@ class FeedBack2(db.Model):
         self.time = datetime.utcnow()
 
 
+class FeedBack3(db.Model):
+    """
+    施工方施工信息表
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, nullable=False)
+    start_node_id = db.Column(db.Integer, nullable=False)
+    end_node_id = db.Column(db.Integer, nullable=False)
+    used_time = db.Column(db.DATETIME)
+    qixian = db.Column(db.FLOAT)
+
+
+
 
 
 

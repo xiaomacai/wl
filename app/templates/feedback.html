@@ -3,23 +3,35 @@
 
 {% block title %}
     {% if current_user.permissions == 1 %}
-    用户反馈
+        用户反馈
     {% else %}
-    施工方反馈
+        施工方反馈
     {% endif %}
-{% endblock title%}
+{% endblock title %}
 
 {% block page_content %}
     <div class="container col-md-4">
-    <p>
-    <h3>
-    {% if current_user.permissions == 1 %}
-    用户反馈
-    {% else %}
-    施工方反馈
-    {% endif %}
-</h3></p>
-<br>
-{{ wtf.quick_form(form) }}
-</div>
+        <p>
+        <h3>
+            {% if current_user.permissions == 1 %}
+                用户反馈
+            {% else %}
+                施工方反馈
+            {% endif %}
+        </h3></p>
+        <br>
+        {{ wtf.quick_form(form) }}
+
+        <br>
+        <h3>施工路段信息提交</h3>
+        路段始点:
+        <input type="text" placeholder="路段始点"> <br>
+        路段终点：
+        <input type="text" placeholder="路段终点"><br>
+        施工周期:
+        <input type="text" placeholder="施工周期"><br>
+        施工时限：
+        <input type="text" placeholder="施工时限"><br>
+        <button class="btn btn-info">提交</button>
+    </div>
 {% endblock %}
